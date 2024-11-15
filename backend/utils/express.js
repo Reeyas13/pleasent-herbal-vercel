@@ -25,10 +25,10 @@ app.get("/api/esewa/failure",(req,res)=>{
     return res.status(200).json({success:false})
 })
 
-app.use("*", (req, res) => {
-    return res.status(404).json({
-        success: false,
-        message: "Page not found",
-    });
-})
+// app.use("*", (req, res) => {
+//     return res.status(404).json({
+//         success: false,
+//         message: "Page not found",
+//     });
+// })
 export default app;
