@@ -14,7 +14,7 @@ const app = express();
 app.use(fileUpload({ safeFileNames: true, preserveExtension: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({credentials: true, origin: process.env.FRONTENDURL}));// cross origin port communication
+app.use(cors({credentials: true, origin: process.env.FRONTENDURL, methods: ["GET", "POST", "PUT", "DELETE"]}));// cross origin port communication
 app.use("/api", router);
 
 
