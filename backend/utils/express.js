@@ -15,6 +15,12 @@ app.use(fileUpload({ safeFileNames: true, preserveExtension: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({credentials: true, origin: process.env.FRONTENDURL, methods: ["GET", "POST", "PUT", "DELETE"]}));// cross origin port communication
+app.get("/", (req, res) => {
+    return res.status(200).json({
+        success: true,
+        message: "pleasent hearbal's backend is running",
+    });
+})
 app.use("/api", router);
 
 
