@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE `user` ADD COLUMN `Attempt` INTEGER NOT NULL DEFAULT 0,
-    ADD COLUMN `locked` BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN `lockedAt` DATETIME(3) NULL;

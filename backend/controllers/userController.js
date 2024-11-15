@@ -39,8 +39,6 @@ export default {
         return res.json({ message: "User already exists", sucess: false });
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      console.log({ hashedPassword });
       const user = await prisma.user.create({
         data: {
           name,
@@ -68,7 +66,7 @@ export default {
       // });
       res
         .status(200)
-        .json({ message: "User created successfully", token, sucess: true });
+        .json({ message: "User created successfully", sucess: true });
     } catch (error) {
       return res.json({ error: error.message, sucess: false });
     }
