@@ -8,6 +8,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 
 const Nav = ({ toggleCart }) => {
     const { isAuthenticated } = useSelector(state => state.auth);
+    console.log(isAuthenticated)
     const [navbarOpen, setNavbarOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -17,11 +18,11 @@ const Nav = ({ toggleCart }) => {
     };
 
     // Handle navigation after logout
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login'); // Redirect to login after logout
-        }
-    }, [isAuthenticated, navigate]);
+    // useEffect(() => {
+    //     if (!isAuthenticated) {
+    //         navigate('/login'); // Redirect to login after logout
+    //     }
+    // }, [isAuthenticated, navigate]);
 
     return (
         <header className="flex w-full items-center bg-white dark:bg-dark bg-gradient-to-r from-blue-500 to-purple-600">

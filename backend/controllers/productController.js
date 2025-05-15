@@ -199,7 +199,7 @@ export default {
       return next(customError(500, error.message));
     }
   },
-  getFeatured: async (req, res) => {
+  getFeatured: async (req, res,next) => {
 
     try {
       const products = await prisma.product.findMany({

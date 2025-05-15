@@ -9,6 +9,10 @@ const api = axios.create({
     'Accept': 'application/json',
   },
 });
+let store; 
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 // Request interceptor
 api.interceptors.request.use(

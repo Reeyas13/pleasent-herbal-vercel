@@ -9,6 +9,7 @@ import { FaTimes } from 'react-icons/fa';
 import Footer from '../components/frontend/Footer';
 
 const FrontendLayout = ({ children }) => {
+ 
   const [cartOpen, setCartOpen] = useState(false);
   const dispatch = useDispatch();
   const { item: cartItems, quantity, total, isLoading, fetchError } = useSelector((state) => state.cart);

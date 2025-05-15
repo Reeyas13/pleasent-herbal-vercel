@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../axios";
 const initialState = {
-  isAuthenticated: true,
+  isAuthenticated: false,
   isLoading: true,
   user: null,
 twoStep: false
@@ -108,9 +108,10 @@ const authSlice = createSlice({
       }).addCase(verifyLogin.pending, (state) => {
         state.isLoading = true;
       }).addCase(verifyLogin.fulfilled, (state, action) => {
+        console.log(action.payload)
         state.isLoading = false;
         state.isAuthenticated = action.payload?.success ? true : false;
-        state.user = action.payload?.sucess ? action.payload?.user : null;
+        state.user = action.payload?.success ? action.payload?.user : null;
       }).addCase(verifyLogin.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;

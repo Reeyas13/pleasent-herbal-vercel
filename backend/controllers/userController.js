@@ -262,7 +262,8 @@ export default {
         secure: true,
         sameSite: "none",
       });
-
+      // console.log(user)
+      // user.password=undefined
       return res.json({ message: "Login success", success: true,user:{
         name:user.name,
         email:user.email,

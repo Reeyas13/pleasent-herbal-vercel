@@ -7,7 +7,7 @@ import Nav from '../components/frontend/Nav'
 import FrontendLayout from '../layouts/FrontendLayout'
 import Products from '../components/frontend/Products'
 
-const Home = ({ isAuthenticated }) => {
+const Home = () => {
     return (
         <FrontendLayout>
             <div className=''>

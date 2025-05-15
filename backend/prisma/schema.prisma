@@ -3,10 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/sneakerheadv2"
 }
+
 enum Role {
   ADMIN
   USER
@@ -24,9 +24,7 @@ enum OrderStatus {
 enum paymentStatus {
   SUCCESS
   FAILURE
-  
 }
-
 
 model User {
   id          Int           @id @default(autoincrement())
@@ -46,7 +44,9 @@ model User {
   Attempt       Int           @default(0)
   locked        Boolean       @default(false)
   isVerified    Boolean       @default(false)
-  lockedAt      DateTime? 
+  lockedAt      DateTime?
+  // For recommendation system
+  productViews ProductView[]
 }
 
 model UserAddress {
@@ -55,19 +55,17 @@ model UserAddress {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   addressLine1 String
   addressLine2 String?
-  city_id         Int
-  City      City   @relation(fields: [city_id],references: [id])
+  city_id      Int
+  City         City     @relation(fields: [city_id], references: [id])
   state        String
-  // country      String
-  // postalCode   String
   phone        String
   createdAt    DateTime @default(now())
 }
 
 model UserPayment {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   userId      Int
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   paymentType String  
   provider    String  
   accountNo   String
@@ -84,12 +82,15 @@ model Product {
   imageUrls    Json
   slug         String         @unique
   createdAt    DateTime       @default(now())
-  featured     Boolean      @default(false)
+  featured     Boolean        @default(false)
   updatedAt    DateTime       @updatedAt
   category_Id  Int
-  categories   Category    @relation(fields: [category_Id],references: [id])
+  categories   Category       @relation(fields: [category_Id], references: [id])
   orders       Order[]
-  cart        Cart[]
+  cart         Cart[]
+  // For recommendation system
+  productViews ProductView[]
+  tags         ProductTag[]
 }
 
 model Category {
@@ -98,40 +99,37 @@ model Category {
   description String?
   slug        String    @unique
   products    Product[] 
-
 }
 
 model Order {
-  id          Int             @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   userId      Int
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   total       Float
-  status      OrderStatus     @default(PENDING)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  status      OrderStatus  @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   productId   Int     
   quantity    Int
-  products    Product?        @relation(fields: [productId], references: [id])
+  products    Product?     @relation(fields: [productId], references: [id])
   shipping_id Int
   payment_id  Int
-  shipping    OrderShipping @relation(fields: [shipping_id],references: [id])
-  payments    OrderPayment  @relation(fields: [payment_id],references: [id])
+  shipping    OrderShipping @relation(fields: [shipping_id], references: [id])
+  payments    OrderPayment  @relation(fields: [payment_id], references: [id])
   payment     Payment[]
 }
 
 model OrderShipping {
-  id          Int       @id @default(autoincrement())
- 
-  order       Order[]
-  address     String
-  city_id     Int
-  city        City    @relation(fields: [city_id],references: [id])
-  state       String
-  shippingFee Float
+  id                Int       @id @default(autoincrement())
+  order             Order[]
+  address           String
+  city_id           Int
+  city              City      @relation(fields: [city_id], references: [id])
+  state             String
+  shippingFee       Float
   estimatedDelivery DateTime
-  createdAt   DateTime @default(now())
+  createdAt         DateTime  @default(now())
 }
-
 
 model OrderPayment {
   id          Int       @id @default(autoincrement())
@@ -143,33 +141,62 @@ model OrderPayment {
   paidAt      DateTime?
   createdAt   DateTime   @default(now())
 }
-model Cart{
-  id Int  @id @default(autoincrement())
-  userId Int
+
+model Cart {
+  id        Int     @id @default(autoincrement())
+  userId    Int
   productId Int
-  quantity Int
-  user  User  @relation(fields: [userId],references: [id])
-  product Product @relation(fields: [productId],references: [id])
+  quantity  Int
+  user      User    @relation(fields: [userId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
-model Payment{
-  id String @id @default(uuid())
-  userId Int
-  orderId Int
-  amount Int
-  signature String?
+model Payment {
+  id              String         @id @default(uuid())
+  userId          Int
+  orderId         Int
+  amount          Int
+  signature       String?
   transaction_code String?
   typeOfPayment   String         @default("ESEWA")
-  status  paymentStatus? @default(FAILURE)
-  user   User @relation(fields: [userId],references: [id])
-  order   Order @relation(fields: [orderId],references: [id])
+  status          paymentStatus? @default(FAILURE)
+  user            User           @relation(fields: [userId], references: [id])
+  order           Order          @relation(fields: [orderId], references: [id])
 }
 
+model City {
+  id             Int             @id @default(autoincrement())
+  name           String
+  shippingFees   Int
+  orderShipping  OrderShipping[]
+  userAddress    UserAddress[]
+}
 
-model City{
-  id Int @id @default(autoincrement())
-  name String
-  shippingFees Int
-  orderShipping OrderShipping[]
-  userAddress   UserAddress[]
+// Models for recommendation system
+model ProductView {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  viewCount Int      @default(1)
+  lastViewed DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Tag {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  products    ProductTag[]
+}
+
+model ProductTag {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  tagId     Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, tagId])
 }

@@ -37,21 +37,21 @@ const PaymentIndex = lazy(() => import("./dashboard/payment/PaymentIndex"));
 const CityManagementPage = lazy(() => import("./dashboard/city/CityManagement"));
 
 export default function App() {
-  const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+  // const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(checkAuth());
+  // }, [dispatch]);
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
 
   return (
     <>
       <Toaster position="top-center" />
       <Routes>
         {/* Frontend Routes */}
-        <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
+        <Route path="/" element={<Home  />} />
         <Route element={<UserLayout />}>
           <Route path="products">
             <Route index element={<ProductsPage />} />
