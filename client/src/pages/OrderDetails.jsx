@@ -22,9 +22,8 @@ const OrderDetails = () => {
   if (isError) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
   return (
-    <FrontendLayout>
-{console.log(order)}
-    <div className="container mx-auto mt-8 p-4 bg-white shadow-md rounded-md">
+
+    <div className="container mx-auto mt-8 p-4 mb-8 bg-white shadow-md rounded-md">
       <h1 className="text-2xl font-semibold mb-4">Order Details</h1>
       {/* <form className="grid grid-cols-2 gap-4"> */}
         <div>
@@ -142,7 +141,7 @@ const OrderDetails = () => {
         {!(order.payments.amountPaid ) && (
             <CheckoutButton orderId={order.id} />
           )}
-        {(!order.payments.paidAt ) && (
+        {/* {(!order.payments.paidAt ) && (
           <div className="col-span-2 mt-4">
             <button
               type="button"
@@ -152,10 +151,9 @@ const OrderDetails = () => {
               Pay Now
             </button>
           </div>
-        )}
+        )} */}
       {/* </form> */}
     </div>
-        </FrontendLayout>
   );
 };
 

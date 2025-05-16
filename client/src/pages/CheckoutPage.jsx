@@ -74,7 +74,7 @@ const CheckoutPage = () => {
             <h2 className="text-2xl font-bold mb-4">Checkout</h2>
             {product && (
                 <div className="flex mb-4">
-                    <img src={mainImage} alt={product.name} className="w-16 h-16 object-cover rounded mr-4" />
+                    <img src={process.env.REACT_APP_API_BASE_URL+mainImage} alt={product.name} className="w-16 h-16 object-cover rounded mr-4" />
                     <div>
                         <h3 className="text-lg font-semibold">{product.name}</h3>
                         <p className="text-gray-600">Quantity: {quantity}</p>

@@ -102,7 +102,6 @@ const Profile = () => {
     if (isError) return <div className="text-center text-red-500">Error: {error.message}</div>;
 
     return (
-        <FrontendLayout>
             <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
                 <h1 className="text-2xl font-semibold text-gray-800 mb-6">Profile</h1>
 
@@ -240,7 +239,6 @@ const Profile = () => {
                 </div>
                 <Link to={"/overview"} className="w-full mt-12 bg-blue-500 text-white py-3 px-8 rounded-lg font-semibold hover:bg-blue-600">Overview</Link>
             </div>
-        </FrontendLayout>
     );
 };
 

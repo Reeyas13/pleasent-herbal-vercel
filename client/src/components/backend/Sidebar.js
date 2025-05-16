@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../../store/auth-slice";
 const CustomDropDown = ({ defaultLink, name, subLinks }) => {
     const [isOpen, setIsOpen] = useState(false);
     // const { data: session, status } = useSession();
@@ -19,7 +20,7 @@ const CustomDropDown = ({ defaultLink, name, subLinks }) => {
             </div>
             {isOpen && (
                 <div className="pl-4">
-                    {subLinks.map((subLink, index) => (
+                    {Array.isArray(subLinks) && subLinks.map((subLink, index) => (
                         <div key={index} className="px-4 py-2 cursor-pointer hover:bg-gray-200">
                             <Link to={subLink.href} className={`block w-full ${window.location.pathname === subLink.href ? "text-purple-500 " : ""}`}>
                                 {subLink.name}
@@ -33,6 +34,8 @@ const CustomDropDown = ({ defaultLink, name, subLinks }) => {
 };
 
 export default function Sidebar({ open, setOpen }) {
+    const navigate = useNavigate();
+
     const links = [
         {
             href: "/admin/categories",
@@ -73,6 +76,38 @@ export default function Sidebar({ open, setOpen }) {
             ],
         },
         {
+            href: "admin/shoe-brand/add",
+            name: "brands",
+            sub:[
+
+               { name:"brand controller",
+                href:"admin/shoe-brand/add"}
+            ]
+        },
+        {
+            href: "admin/shoe-colors/add",
+            name: "Colors",
+            sub:[
+                {
+                    name: "Color controller",
+                    href: "/admin/shoe-colors/add",
+                },
+                
+            ]
+        
+        },
+        {
+            href: "admin/shoe-size/add",
+            name: "Sizes",
+            sub:[
+                {
+                    name: "Size controller",
+                    href: "/admin/shoe-size/add",
+                },
+                
+            ]
+        },
+        {
             href: "/admin/payments",
             name: "Payments",
             sub: [
@@ -95,9 +130,7 @@ export default function Sidebar({ open, setOpen }) {
     ];
     
     // const {post} = useForm();
-    async function logout() {
-        console.log("method not implemented");
-    }
+    
     return (
         <div className={`fixed inset-0 z-50 ${open ? "block" : "hidden"}`}>
             <div className="fixed inset-0 bg-black opacity-50 overflow-auto" onClick={() => setOpen(false)}></div>
@@ -135,7 +168,10 @@ export default function Sidebar({ open, setOpen }) {
                     <hr className="border-gray-300" />
                     <div className="mt-4">
                         <button
-                            onClick={() => logout()}
+                            onClick={() => {
+                                logout();
+                                navigate("/")
+                            }}
                             className="w-full flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600"
                         >
                             Logout

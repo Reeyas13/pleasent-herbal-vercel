@@ -15,6 +15,7 @@ const ProductPage = () => {
         queryKey: ['product', slug],
         queryFn: async () => {
             const response = await api.get(`/api/products/${slug}`);
+            console.log(response)
             return response.data;
         },
     });
@@ -84,7 +85,7 @@ const ProductPage = () => {
                             <div className="h-[460px] rounded-lg bg-gray-300 mb-4">
                                 <img
                                     className="w-full h-full object-cover rounded-lg"
-                                    src={mainImage}
+                                    src={process.env.REACT_APP_API_BASE_URL+mainImage}
                                     alt={product.name}
                                 />
                             </div>
@@ -92,7 +93,7 @@ const ProductPage = () => {
                                 {imageUrls.map((url, index) => (
                                     <img
                                         key={index}
-                                        src={url}
+                                        src={process.env.REACT_APP_API_BASE_URL+url}
                                         alt={`${product.name} image ${index + 1}`}
                                         className="w-16 h-16 object-cover rounded-lg cursor-pointer"
                                         onClick={() => setMainImage(url)}

@@ -11,6 +11,9 @@ import overviewRoute from "./overviewRoute.js";
 import AdminOrderRoutes from "./AdminOrderRoutes.js";
 import adminPaymentRoutes from "./adminPaymentRoutes.js";
 import cityRoutes from "./cityRoutes.js";
+import recomendationRoute from "./recommendationRoutes.js"
+import attributeRoutes from "./attributeRoutes.js"
+
 
 const router = Router();
 
@@ -27,5 +30,6 @@ router.use("/admin/order",AdminOrderRoutes)
 
 router.use("/admin/payment",adminPaymentRoutes)
 router.use("/city",cityRoutes)
-
+router.use("/",recomendationRoute)
+router.use("/",attributeRoutes)
 export default router

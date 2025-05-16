@@ -12,12 +12,9 @@ const ProductsPage = () => {
   const [sortOption, setSortOption] = useState(null);
   const navigate = useNavigate();
 
-  const { data: products = [], error, isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
-    queryFn: async () => {
-      const response = await api.get('/api/products/get/frontend');
-      return response.data;
-    },
+    queryFn: () => api.get('/api/products/get/frontend').then(res => res.data),
   });
 
   const sortOptions = [
@@ -26,78 +23,91 @@ const ProductsPage = () => {
     { value: 'newest', label: 'Newest Arrivals' },
   ];
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleSearchChange = e => setSearchTerm(e.target.value);
+  const handleSortChange = opt => setSortOption(opt);
+  const handleProductClick = slug => navigate(`/products/${slug}`);
 
-  const handleSortChange = (selectedOption) => {
-    setSortOption(selectedOption);
-  };
-
-  const handleProductClick = (slug) => {
-    navigate(`/products/${slug}`);
-  };
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = products
+    .filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      if (!sortOption) return 0;
+      if (sortOption.value === 'low-to-high') return a.price - b.price;
+      if (sortOption.value === 'high-to-low') return b.price - a.price;
+      if (sortOption.value === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+      return 0;
+    });
 
   return (
     <FrontendLayout>
-      <h1 className="text-3xl font-bold mb-6 text-center">Our Products</h1>
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">
+          Our Products
+        </h1>
 
-      {/* Search and Filter Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 w-[90%] mx-auto">
-        {/* Search Bar */}
-        <div className="flex items-center border p-2 rounded-lg w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="p-2 w-full sm:w-64 focus:outline-none"
-          />
-          <FaSearch className="h-5 w-5 text-gray-500 ml-2" />
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-4">
+          <div className="flex items-center w-full sm:w-1/2 bg-white border rounded-lg shadow-sm px-4 py-2">
+            <FaSearch className="text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center w-full sm:w-1/3 bg-white border rounded-lg shadow-sm px-4 py-2">
+            <FaFilter className="text-gray-400 mr-2" />
+            <Select
+              options={sortOptions}
+              value={sortOption}
+              onChange={handleSortChange}
+              placeholder="Sort by"
+              className="w-full text-sm"
+              styles={{
+                control: (base) => ({ ...base, border: 'none', boxShadow: 'none' }),
+              }}
+            />
+          </div>
         </div>
 
-        {/* Sort Dropdown */}
-        <div className="flex items-center w-full sm:w-auto">
-          <FaFilter className="text-gray-500 mr-2" />
-          <Select
-          // isMulti={true}
-            options={sortOptions}
-            value={sortOption}
-            onChange={handleSortChange}
-            placeholder="Sort by"
-            className="w-full sm:w-48"
-          />
-        </div>
-      </div>
-
-      {/* Products Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => {
-          const images = JSON.parse(product.imageUrls);
-
-          return (
-            <div
-              key={product.id}
-              onClick={() => handleProductClick(product.slug)}
-              className="border rounded-lg p-4 flex flex-col items-center text-center shadow-lg cursor-pointer transform transition duration-200 hover:scale-105"
-            >
-              <div className="h-44 w-full bg-gray-200 mb-4 rounded-lg flex items-center justify-center overflow-hidden">
-                {/* Cloudinary URL with aspect ratio transformation */}
-                <img
-                  src={`${images[0]}`}
-                  alt={product.name}
-                  className="object-contain h-full w-full rounded-lg"
-                />
-              </div>
-              <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-              <p className="text-gray-700 mb-2">${product.price}</p>
-            </div>
-          );
-        })}
+        {/* Products Grid */}
+        {isLoading ? (
+          <p className="text-center text-gray-500">Loading products...</p>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-gray-500">No products found.</p>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {filtered.map(product => {
+              const images = JSON.parse(product.imageUrls);
+              return (
+                <div
+                  key={product.id}
+                  onClick={() => handleProductClick(product.slug)}
+                  className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col"
+                >
+                  <div className="relative h-56 bg-gray-100">
+                    <img
+                      src={`${process.env.REACT_APP_API_BASE_URL}${images[0]}`}
+                      alt={product.name}
+                      className="object-contain h-full w-full"
+                    />
+                  </div>
+                  <div className="p-4 flex-1 flex flex-col">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h2>
+                    <div className="mt-auto flex items-center justify-between">
+                      <span className="text-xl font-bold text-blue-600">${product.price}</span>
+                      <button className="text-white bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 transition">
+                        View
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </FrontendLayout>
   );

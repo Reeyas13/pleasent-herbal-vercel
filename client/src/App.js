@@ -23,6 +23,9 @@ import NotFoundPage from "./pages/NotFound";
 import UserLayout from "./layouts/UserLayout";
 import VerifyLogin from "./pages/VerifyLogin";
 import Profile from "./pages/Profile";
+import AddShoeColor from "./dashboard/attributes/AddShoeColor";
+import AddShoeSize from "./dashboard/attributes/AddShoeSize";
+import AddShoeBrand from "./dashboard/attributes/AddShoeBrand";
 
 // Lazy-loaded Admin Dashboard Components
 const AdminLayout = lazy(() => import("./layouts/AdminLayouts"));
@@ -52,20 +55,23 @@ export default function App() {
       <Routes>
         {/* Frontend Routes */}
         <Route path="/" element={<Home  />} />
-        <Route element={<UserLayout />}>
+        {/* <Route element={<UserLayout />}> */}
           <Route path="products">
             <Route index element={<ProductsPage />} />
             <Route path=":slug" element={<ProductPage />} />
           </Route>
           <Route path="/cart" element={<Cart />} />
+          <Route path="/order-summary" element={<OrderSummary />} />
+
+          <Route path="" element={<UserLayout />}>
+          <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/order/:id" element={<OrderDetails />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/order-summary" element={<OrderSummary />} />
+        </Route>
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failure" element={<PaymentFailure />} />
-        </Route>
+        {/* </Route> */}
 
         {/* Authentication Routes */}
         /**
@@ -136,6 +142,30 @@ export default function App() {
                 <EditProduct />
               </Suspense>
             }
+          />
+          <Route 
+          path="shoe-colors/add"
+          element = {
+            <Suspense fallback={<Loader />}>
+              <AddShoeColor />
+            </Suspense>
+          }
+          />
+          <Route 
+          path="shoe-size/add"
+          element = {
+            <Suspense fallback={<Loader />}>
+              <AddShoeSize />
+            </Suspense>
+          }
+          />
+          <Route 
+          path="shoe-brand/add"
+          element = {
+            <Suspense fallback={<Loader />}>
+              <AddShoeBrand />
+            </Suspense>
+          }
           />
 
           {/* Orders and Payments Management */}

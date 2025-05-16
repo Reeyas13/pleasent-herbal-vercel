@@ -73,7 +73,7 @@ export const getVerificationEmailTemplate = (verificationCode) =>  `
 
     <div class="footer">
       <p>&copy; 2024 All rights reserved.</p>
-      <p>Pleasent Herbal, Itahari-20, Tarahara</p>
+      <p>Sneaker Head, Inaruwa</p>
     </div>
   </div>
 </body>
@@ -196,7 +196,7 @@ export const   getorderConfirmationTemplate =(orderId,img,name,price,quantity,sh
 
     <div class="footer">
       <p>&copy; 2024 All rights reserved.</p>
-      <p>Pleasent Herbal, Itahari-20, Tarahara</p>
+      <p>Sneaker head, Inaruwa</p>
     </div>
   </div>
 </body>

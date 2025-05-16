@@ -5,11 +5,10 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import Nav from '../components/frontend/Nav';
 import { logout } from '../store/auth-slice';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaPlus, FaMinus, FaShoppingCart } from 'react-icons/fa';
 import Footer from '../components/frontend/Footer';
 
 const FrontendLayout = ({ children }) => {
- 
   const [cartOpen, setCartOpen] = useState(false);
   const dispatch = useDispatch();
   const { item: cartItems, quantity, total, isLoading, fetchError } = useSelector((state) => state.cart);
@@ -44,96 +43,127 @@ const FrontendLayout = ({ children }) => {
   }, [dispatch]);
 
   // Logout handler
-  const logoutHandler = () => {
-    dispatch(logout());
-  };
-
+ const logoutHandler = () => {
+  setCartOpen(false); // Close the cart sidebar
+  dispatch(logout());
+};
   return (
-    <div className="relative">
+    <div className="relative min-h-screen flex flex-col">
       {/* Navbar with cart toggle */}
       <Nav toggleCart={toggleCart} />
 
       {/* Main content */}
-      {/* <main className="container mx-auto p-4 md:p-6"> */}
+      <main className="flex-grow">
         {children}
-      {/* </main> */}
+      </main>
+
+      {/* Cart Sidebar Overlay */}
+      {cartOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleCart}></div>
+      )}
 
       {/* Cart Sidebar */}
-      {cartOpen && (
-        <div className="fixed top-0 right-0 w-3/4 sm:w-1/3 h-full bg-white shadow-lg p-4 z-50 overflow-y-auto">
-          {/* Close button */}
+      <div className={`fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${cartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+        {/* Cart Header */}
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+          <h2 className="text-2xl font-bold flex items-center">
+            <FaShoppingCart className="mr-2 text-blue-600" />
+            Your Cart
+          </h2>
           <button
             onClick={toggleCart}
-            className="absolute top-4 right-4 text-xl text-gray-600 hover:text-gray-900">
-            <FaTimes />
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors">
+            <FaTimes className="text-gray-600 text-xl" />
           </button>
-          
-          {/* Cart title */}
-          <h2 className="text-xl font-semibold mb-4">Your Cart</h2>
-
-          {/* Cart content */}
+        </div>
+        
+        {/* Cart Content */}
+        <div className="flex-grow overflow-y-auto p-4">
           {isLoading ? (
-            <div>Loading cart...</div>
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
           ) : fetchError ? (
-            <div className="text-red-500">Error loading cart items: {fetchError.message}</div>
+            <div className="text-red-500 p-4 text-center">Error loading cart items: {fetchError.message}</div>
           ) : cartItems.length > 0 ? (
-            cartItems.map((item) => {
-              const image = JSON.parse(item?.product?.imageUrls);
-              return (
-                <div key={item.id} className="flex items-center mb-4 border-b pb-4">
-                  <img
-                    src={image[0]}
-                    alt={item.product.name}
-                    className="w-16 h-16 object-cover mr-4"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{item.product.name}</h3>
-                    <p className="text-gray-600">Quantity: {item.quantity}</p>
-                    <p className="text-gray-600">Price: ${item?.product?.price}</p>
-                    {item.message && (
-                      <p className="text-red-500 text-sm mt-1">{item.message}</p>
-                    )}
+            <div>
+              {cartItems.map((item) => {
+                const image = JSON.parse(item?.product?.imageUrls);
+                return (
+                  <div key={item.id} className="flex items-center mb-4 border-b pb-4 hover:bg-gray-50 rounded-lg p-2">
+                    <img
+                      src={process.env.REACT_APP_API_BASE_URL + image[0]}
+                      alt={item.product.name}
+                      className="w-20 h-20 object-cover rounded-md shadow-sm mr-4"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{item.product.name}</h3>
+                      <p className="text-gray-600">Quantity: {item.quantity}</p>
+                      <p className="font-medium text-blue-600">${item?.product?.price.toFixed(2)}</p>
+                      {item.message && (
+                        <p className="text-red-500 text-sm mt-1">{item.message}</p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-center space-y-2">
+                      <button
+                        className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center shadow hover:bg-green-600 transition-colors"
+                        onClick={() => addToCart(item.id)}
+                      >
+                        <FaPlus className="text-sm" />
+                      </button>
+                      <button
+                        className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow hover:bg-red-600 transition-colors"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        <FaMinus className="text-sm" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      className="text-green-500"
-                      onClick={() => addToCart(item.id)}
-                    >
-                      +
-                    </button>
-                    <button
-                      className="text-red-500"
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      -
-                    </button>
-                  </div>
+                );
+              })}
+              
+              {/* Cart Summary */}
+              <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between mb-2">
+                  <span className="font-medium">Subtotal:</span>
+                  <span className="font-bold">${total ? total.toFixed(2) : '0.00'}</span>
                 </div>
-              );
-            })
+                <div className="flex justify-between mb-4">
+                  <span className="font-medium">Items:</span>
+                  <span className="font-bold">{quantity}</span>
+                </div>
+              </div>
+            </div>
           ) : (
-            <div className="text-center text-gray-500">No items in cart</div>
+            <div className="flex flex-col items-center justify-center h-64">
+              <FaShoppingCart className="text-gray-300 text-5xl mb-4" />
+              <p className="text-gray-500 text-lg">Your cart is empty</p>
+            </div>
           )}
+        </div>
 
-          {/* Checkout button */}
+        {/* Cart Footer */}
+        <div className="p-4 border-t border-gray-200 bg-gray-50">
           {cartItems.length > 0 && (
             <Link
               to="/cart"
-              className="w-full bg-blue-500 text-white py-3 mt-4 rounded-lg font-semibold hover:bg-blue-600"
+              className="w-full block text-center bg-blue-600 text-white py-4 px-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors shadow-md"
+              onClick={toggleCart}
             >
-              Checkout
+              Proceed to Checkout
             </Link>
           )}
 
-          {/* Logout button at the bottom */}
+          {/* Logout button */}
           <button
             onClick={logoutHandler}
-            className="w-full mt-6 bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600"
+            className="w-full mt-3 bg-red-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-red-600 transition-colors"
           >
             Logout
           </button>
         </div>
-      )}
+      </div>
+
       <Footer />
     </div>
   );

@@ -6,7 +6,7 @@ function CheckoutButton({orderId}) {
   const [orders, setOrders] = useState([]);
 
   const handlePayment = async (payment_method) => {
-    const url = "http://localhost:8000/api/payment/initiate";
+    const url = "http://localhost:5000/api/payment/initiate";
     const data = {
       amount: 100,
       orderId: orderId,

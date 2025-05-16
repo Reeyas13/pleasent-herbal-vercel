@@ -47,6 +47,8 @@ model User {
   lockedAt      DateTime?
   // For recommendation system
   productViews ProductView[]
+  // For recommendation system - product purchases
+  purchasedProducts OrderItem[]
 }
 
 model UserAddress {
@@ -91,6 +93,13 @@ model Product {
   // For recommendation system
   productViews ProductView[]
   tags         ProductTag[]
+  // For recommendation system - items in orders
+  orderItems   OrderItem[]
+  shoeSizes ShoeSize[]
+  shoeColor ShoeColor[]
+  shoeBrand ShoeBrand[]
+
+  
 }
 
 model Category {
@@ -117,6 +126,22 @@ model Order {
   shipping    OrderShipping @relation(fields: [shipping_id], references: [id])
   payments    OrderPayment  @relation(fields: [payment_id], references: [id])
   payment     Payment[]
+  // For recommendation system - order items
+  items       OrderItem[]
+}
+
+// For recommendation system - to track product purchases better
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
 }
 
 model OrderShipping {
@@ -172,31 +197,46 @@ model City {
   userAddress    UserAddress[]
 }
 
-// Models for recommendation system
+// For recommendation system
 model ProductView {
   id        Int      @id @default(autoincrement())
   userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   viewCount Int      @default(1)
   lastViewed DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([userId, productId])
 }
 
-model Tag {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  products    ProductTag[]
+// For recommendation system - product tags for content-based filtering
+model ProductTag {
+  id        Int      @id @default(autoincrement())
+  name      String
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  weight    Float    @default(1.0)  // importance of this tag for the product
+
+  @@unique([productId, name])
+}
+model ShoeSize {
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  products Product[]
 }
 
-model ProductTag {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  tagId     Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+model ShoeColor {
+  id      Int     @id @default(autoincrement())
+  name    String
+  hexCode String
+  products Product[]
+}
 
-  @@unique([productId, tagId])
+model ShoeBrand {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+  products Product[]
 }

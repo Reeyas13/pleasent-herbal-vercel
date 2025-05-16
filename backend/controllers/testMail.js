@@ -24,7 +24,7 @@ export const sendVerificationCode = async (verificationCode, email) => {
         {
           From: {
             Email: "reeyaskarki@gmail.com", // Sender email address
-            Name: "Pleasent Herbal",
+            Name: "Sneaker Head",
           },
           To: [
             {
@@ -67,8 +67,8 @@ export const sendOrderConfirmation = async (email,orderId,img,name,price,quantit
   We appreciate your business and hope you enjoy your purchase!
   
   Thank you,
-  Rohan Karki
-  Pleasent Herbal, Itahari-20, Tarahara
+  Md sajid
+  Sneaker head, Itahari-20, Tarahara
   `;
   try {
     const request = mail.post("send", { version: "v3.1" }).request({

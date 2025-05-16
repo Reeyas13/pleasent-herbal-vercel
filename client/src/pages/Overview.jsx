@@ -27,16 +27,12 @@ const OverviewPage = () => {
   }
 
   return (
-    <FrontendLayout
-        
-    FrontendLayout
-    >
+   
       <div className='w-[95%] mx-auto'>
 
       <h1 className='text-4xl text-blue-700 font-semibold'>Order Overview</h1>
       <OrderOverviewTable orders={orders} />
       </div>
-    </FrontendLayout>
   );
 };
 

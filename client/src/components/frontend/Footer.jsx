@@ -1,6 +1,6 @@
 import React from 'react'
 
-import LogoLight from "../../assets/Pleasant Herbal-logos_black.png";
+import LogoLight from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 const Footer = () => {
     return (
@@ -16,7 +16,7 @@ const Footer = () => {
                     alt="logo"
                     className="hidden dark:block ml-8 w-12"
                 /> */}
-                Pleasent Herbal
+                 Sneaker Head
             </Link>
 
             <span className="block text-sm text-center text-gray-500">© 2024 Pleasant Herbal. all rights reserved.

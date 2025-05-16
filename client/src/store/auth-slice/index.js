@@ -49,20 +49,31 @@ export const verifyLogin = createAsyncThunk(
     return response.data;
   }
 )
-  export const logout = createAsyncThunk(
-    '/api/user/logout',
-    async () => {
-      const response = await api.post('/api/user/logout', {
-        withCredentials: true
-      })
-      return response.data
-    }
-  )
+  // export const logout = createAsyncThunk(
+  //   '/api/user/logout',
+  //   async () => {
+  //     const response = await api.post('/api/user/logout', {
+  //       withCredentials: true
+  //     })
+  //     return response.data
+  //   }
+  // )
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+     logout: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.role = null;
+      state.error = null;
+      state.token = "";
+    },
+
+    
+    setUser: (state, action) => {
+
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -116,20 +127,10 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
-      }).addCase(logout.pending, (state) => {
-        state.isLoading = true;
-      }).addCase(logout.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = action.payload?.success ? false : true;
-        state.user = action.payload?.sucess && null;
-      }).addCase(logout.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = false;
-        state.user = null;
       })
       ;
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser,logout } = authSlice.actions;
 export default authSlice.reducer;

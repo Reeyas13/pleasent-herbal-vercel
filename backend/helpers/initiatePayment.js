@@ -45,13 +45,13 @@ export const createOrder = async (req, res) => {
 
     const formData = {
       amount: order.products.price * order.quantity,
-      failure_url: "http://localhost:8000/api/esewa/failure",
+      failure_url: "http://localhost:5000/api/esewa/failure",
       product_delivery_charge: parseInt(order.shipping.shippingFee),
       product_service_charge: "0",
       product_code: "EPAYTEST",
       signature: signature,
       signed_field_names: "total_amount,transaction_uuid,product_code",
-      success_url: "http://localhost:8000/api/esewa/success",
+      success_url: "http://localhost:5000/api/esewa/success",
       tax_amount: "0",
       total_amount: payment.amount,
       transaction_uuid: payment.id,

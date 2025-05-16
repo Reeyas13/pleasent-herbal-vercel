@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LogoDark from "../../assets/Pleasant Herbal-logos_white.png";
-import LogoLight from "../../assets/Pleasant Herbal-logos_black.png";
+import LogoDark from "../../assets/logo.png";
+import LogoLight from "../../assets/logo.png";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/auth-slice';
 import { FaShoppingCart } from 'react-icons/fa';
@@ -38,7 +38,7 @@ const Nav = ({ toggleCart }) => {
                             <img
                                 src={LogoDark}
                                 alt="logo"
-                                className="hidden dark:block ml-8 w-12"
+                                className="hidden dark:block ml-8 w-20"
                             />
                         </Link>
                     </div>
@@ -68,7 +68,7 @@ const Nav = ({ toggleCart }) => {
                                     </li>
                                     <li>
                                         <Link
-                                            to="/product"
+                                            to="/products"
                                             className="flex py-2 text-base font-medium text-body-color hover:text-dark lg:ml-12 lg:inline-flex dark:text-dark-6 dark:hover:text-white"
                                         >
                                             Products
@@ -87,32 +87,35 @@ const Nav = ({ toggleCart }) => {
                         </div>
                         <div className="hidden justify-end pr-16 sm:flex lg:pr-0 ">
                             {
-                                isAuthenticated ? (
-                                    <>
-                                     
-
-                                        <button onClick={toggleCart} className="relative text-white">
-                                            <FaShoppingCart className="h-6 w-6" />
-                                            {/* Cart badge (optional) */}
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Link
-                                            to="/login"
-                                            className="px-7 py-3 text-base font-medium text-dark hover:text-primary dark:text-white"
-                                        >
-                                            Login
-                                        </Link>
-                                        <Link
-                                            to="/register"
-                                            className="rounded-md bg-primary px-7 py-3 text-base font-medium text-white hover:bg-primary/90"
-                                        >
-                                            Register
-                                        </Link>
-                                    </>
-                                )
-                            }
+  isAuthenticated ? (
+    <div className="flex items-center gap-4 text-white">
+      <button onClick={toggleCart} className="relative">
+        <FaShoppingCart className="h-6 w-6" />
+      </button>
+      <div className="relative group">
+        <Link to={"/profile"} className="text-sm font-medium hover:underline">
+          Profile
+        </Link>
+       
+      </div>
+    </div>
+  ) : (
+    <>
+      <Link
+        to="/login"
+        className="px-7 py-3 text-base font-medium text-dark hover:text-primary dark:text-white"
+      >
+        Login
+      </Link>
+      <Link
+        to="/register"
+        className="rounded-md bg-primary px-7 py-3 text-base font-medium text-white hover:bg-primary/90"
+      >
+        Register
+      </Link>
+    </>
+  )
+}
                         </div>
                     </div>
                 </div>

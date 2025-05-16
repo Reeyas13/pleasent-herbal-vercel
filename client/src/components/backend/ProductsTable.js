@@ -100,7 +100,7 @@ const ProductTable = () => {
       {/* Add Product Link */}
       <div className="mb-4">
         <Link
-          to="/product/add"
+          to="/admin/products/add"
           className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md"
         >
           Add Product
